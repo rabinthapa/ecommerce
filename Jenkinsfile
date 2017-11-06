@@ -1,20 +1,34 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
+    }
     stages {
+
         stage('Build') {
             steps {
-                echo 'Building..'
+                bat 'mvn clean install -DskipTests'
+                stash 'working-copy'
             }
         }
+
+
         stage('Test') {
             steps {
-                echo 'Testing..'
+                unstash 'working-copy'
+                bat 'mvn test'
             }
         }
-        stage('Deploy') {
+
+
+        stage('Code Quality') {
             steps {
-                echo 'Deploying....'
+                 unstash 'working-copy'
+                 step([$class: 'hudson.plugins.checkstyle.CheckStylePublisher', pattern: '**/target/checkstyle-result.xml', unstableTotalAll:'0'])
+
+
             }
         }
     }
