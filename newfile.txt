@@ -1,5 +1,0 @@
-This is my sample feature
-
-This is part of next feature
-
-This is another part of the feature
